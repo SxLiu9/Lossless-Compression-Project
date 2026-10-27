@@ -1,0 +1,68 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "source_bytes": 2664245,
+  "source_md5": "967205af325fc85e5783b6847eaf8dba",
+  "compressed_bytes": 615385,
+  "compressed_sha256": "b06ddcce6537c336f89f28e4319b36b5d00fcd0a24733c4d4e8b54fa2f29bade",
+  "reference_format": {
+    "data_bytes": 1772589,
+    "tokens": 2363453,
+    "discarded_tail_bytes": 1,
+    "discarded_tail_hex": "0a",
+    "method": "same greedy phrase choices; offset scan avoids quadratic slicing"
+  },
+  "isolated_round_trip": true,
+  "decoded_md5": "967205af325fc85e5783b6847eaf8dba",
+  "decode_wall_seconds": 11.57560589100001,
+  "decode_user_seconds": 11.533108,
+  "decode_system_seconds": 0.040928,
+  "decode_peak_rss_kib_linux": 81680,
+  "decoder_pyc_bytes": 7402,
+  "scored_bytes": 622787,
+  "scored_bits_per_character": 1.870059247554185,
+  "scored_ratio": 0.23375740594427313,
+  "data_bits_per_character": 1.8478330634007007,
+  "baselines": {
+    "gzip-9": {
+      "data_bytes": 961520,
+      "encode_wall_seconds": 0.23748418699995,
+      "round_trip": true,
+      "scored_reduction_vs_data_only": 0.3522890839504118
+    },
+    "bzip2-9": {
+      "data_bytes": 688389,
+      "encode_wall_seconds": 0.17821542599995155,
+      "round_trip": true,
+      "scored_reduction_vs_data_only": 0.09529786210994073
+    },
+    "xz-9": {
+      "data_bytes": 749452,
+      "encode_wall_seconds": 1.1556865010001047,
+      "round_trip": true,
+      "scored_reduction_vs_data_only": 0.16901015675453535
+    }
+  },
+  "order_experiments": [
+    {
+      "order": 4,
+      "data_bytes": 639983,
+      "encode_wall_seconds": 9.842915916999914
+    },
+    {
+      "order": 6,
+      "data_bytes": 617395,
+      "encode_wall_seconds": 12.712348542999962
+    },
+    {
+      "order": 7,
+      "data_bytes": 629408,
+      "encode_wall_seconds": 13.573186637000049
+    },
+    {
+      "order": 8,
+      "data_bytes": 643085,
+      "encode_wall_seconds": 15.617896588999997
+    }
+  ]
+}

@@ -1,114 +1,137 @@
-#!/usr/bin/python
-
-# Needed for struct.unpack
-
+#!/usr/bin/env python3
+# Standalone decoder: the course permits only struct and decimal imports.
 import struct
 
-# Initialize our list of phrases
+MAGIC = b"APM1"
+# magic, version, maximum context order, alphabet size, original size,
+# range-coded payload size, Adler-32 of the original bytes
+HEADER = struct.Struct("<4sBBHQII")
 
-phrases = ( 'the', # position 0
-        'and', # position 1
-        'to', # position 2
-        'was', # position 3
-        'you',  # position 4
-        'that', # position 5
-        'of', # position 6
-        'with', # position 7
-        'have', # position 8
-        'her', # position 9
-        'had', # position 10
-        'not', # position 11
-        'in', # position 12
-        'she', # position 13
-        'a', # position 14
-        'b', # position 15
-        'c', # position 16
-        'd', # position 17
-        'e', # position 18
-        'f', # position 19
-        'g', # position 20
-        'h', # position 21
-        'i', # position 22
-        'j', # position 23
-        'k', # position 24
-        'l', # position 25
-        'm', # position 26
-        'n', # position 27
-        'o', # position 28
-        'p', # position 29
-        'q', # position 30
-        'r', # position 31
-        's', # position 32
-        't', # position 33
-        'u', # position 34
-        'v', # position 35
-        'w', # position 36
-        'x', # position 37
-        'y', # position 38
-        'z', # position 39
-       '\n', # position 40
-        ' ', # position 41
-        '!', # position 42
-        '"', # position 43
-        '&', # position 44
-        '\'', # position 45
-        '(', # position 46
-        ')', # position 47
-        ',', # position 48
-        '-', # position 49
-        '.', # position 50
-        '0', # position 51
-        '1', # position 52
-        '2', # position 53
-        '3', # position 54
-        '4', # position 55
-        '5', # position 56
-        '6', # position 57
-        '7', # position 58
-        '8', # position 59
-        '9', # position 60
-        ':', # position 61
-        ';', # position 62
-        '?', # position 63
-)
 
-# Open the input and output files. 'rb' is needed on some platforms
-# to indicate that 'compressed' is a binary file.
+def checksum(data):
+    a, b = 1, 0
+    for symbol in data:
+        a = (a + symbol) % 65521
+        b = (b + a) % 65521
+    return (b << 16) | a
 
-fin = open('compressed','rb')
-fout = open('out.txt','w')
 
-# Read in the entire compressed file
+class RangeDecoder:
+    def __init__(self, data):
+        if len(data) < 5 or data[0] != 0:
+            raise ValueError("invalid range-coder initialization")
+        self.data = data
+        self.position = 5
+        self.code = int.from_bytes(data[:5], "big")
+        self.range = 0xffffffff
 
-indata = fin.read();
+    def target(self, total):
+        self.range //= total
+        target = self.code // self.range
+        if target >= total:
+            raise ValueError("invalid arithmetic interval")
+        return target
 
-while len(indata) > 0:
+    def take(self, start, count):
+        self.code -= start * self.range
+        self.range *= count
+        while self.range < (1 << 24):
+            if self.position >= len(self.data):
+                raise ValueError("truncated range-coded payload")
+            self.range <<= 8
+            self.code = (self.code << 8) | self.data[self.position]
+            self.position += 1
 
-    # Python has an "unpack" function that will take a string and
-    # interpret it as a given type. Here we ask it to interpret the
-    # first 3 bytes of the remaining compressed file + a dummy byte
-    # as an unsigned, little-endian, integer.
 
-    fourphrases = struct.unpack("<I", indata[0:3] + b'\0')[0]
+def decode_bytes(blob):
+    if len(blob) < HEADER.size:
+        raise ValueError("truncated file header")
+    magic, version, order, alphabet_size, length, size, expected = HEADER.unpack_from(blob)
+    if magic != MAGIC or version != 1:
+        raise ValueError("unsupported compressed format")
+    if not 1 <= order <= 8 or alphabet_size > 256:
+        raise ValueError("invalid model parameters")
+    boundary = HEADER.size + alphabet_size
+    if len(blob) != boundary + size:
+        raise ValueError("compressed file length mismatch")
+    alphabet = blob[HEADER.size:boundary]
+    if alphabet != bytes(sorted(set(alphabet))) or bool(length) != bool(alphabet):
+        raise ValueError("invalid alphabet")
+    coder = RangeDecoder(blob[boundary:])
+    models = {b"": dict.fromkeys(alphabet, 1)}
+    estimators = {}
+    history = b""
+    singles = [bytes((s,)) for s in range(256)]
+    bits = [1 << s for s in range(256)]
+    output = bytearray()
 
-    # delete three bytes from the beginning of the file since we
-    # have already extracted them.
+    for _ in range(length):
+        excluded = 0
+        # Descend from the longest available suffix to the order-zero model.
+        chain = [models.setdefault(history[j:], {}) for j in range(len(history) + 1)]
+        for level, context in enumerate(chain):
+            if not context:
+                continue
+            eligible = [(s, 2 * c - 1) for s, c in context.items()
+                        if not excluded & bits[s]]
+            if not eligible:
+                continue
+            total = sum(c for s, c in eligible)
+            if level < len(chain) - 1:
+                # Secondary escape estimation pools similar contexts. Store
+                # [hit count, escape count]; the initial odds are PPM method D.
+                n = len(eligible)
+                bucket = (len(chain) - level - 1,
+                          n if n < 8 else 8 + n.bit_length(),
+                          (total // n).bit_length(), bool(excluded))
+                prediction = estimators.setdefault(bucket, [total, n])
+                hits, escapes = prediction
+                escaped = coder.target(hits + escapes) >= hits
+                coder.take(hits if escaped else 0, escapes if escaped else hits)
+                prediction[1 if escaped else 0] += 1
+                if sum(prediction) >= 1024:
+                    prediction[:] = [(c + 1) >> 1 for c in prediction]
+                if escaped:
+                    for s, c in eligible:
+                        excluded |= bits[s]
+                    continue
 
-    indata = indata[3:];
+            target = coder.target(total)
+            cumulative = 0
+            for symbol, count in eligible:
+                if target < cumulative + count:
+                    coder.take(cumulative, count)
+                    break
+                cumulative += count
+            else:
+                raise ValueError("symbol interval not found")
+            break
+        else:
+            raise ValueError("all context models exhausted")
 
-    # We have 4 phrases, each using 6 bits, encoded across the
-    # unsigned integer fourphrases.
+        # Update exclusion: update only models down to the one that succeeded.
+        for context in chain[:level + 1]:
+            context[symbol] = context.get(symbol, 0) + 1
+            if context[symbol] >= 4096:
+                for s, count in context.items():
+                    context[s] = (count + 1) >> 1
+        history = (history + singles[symbol])[-order:]
+        output.append(symbol)
 
-    for i in range(0,4):
+    if coder.position != len(coder.data) or coder.code != 0:
+        raise ValueError("noncanonical range-coder termination")
+    if checksum(output) != expected:
+        raise ValueError("decoded content checksum mismatch")
+    return bytes(output)
 
-        ind = (fourphrases >> 6*i) & 63
-        fout.write(phrases[ind])
 
-# 'compressed' does not include the final newline so we output it here
+def main():
+    with open("compressed", "rb") as source:
+        restored = decode_bytes(source.read())
+    # Write only after the stream has been decoded and verified in full.
+    with open("out.txt", "wb") as destination:
+        destination.write(restored)
 
-fout.write('\n');
 
-# Close input and output files
-
-fin.close()
-fout.close()
+if __name__ == "__main__":
+    main()
