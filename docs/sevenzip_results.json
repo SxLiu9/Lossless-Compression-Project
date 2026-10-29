@@ -1,0 +1,242 @@
+{
+  "sevenzip_version": "7-Zip (z) 25.01 (x64) : Copyright (c) 1999-2025 Igor Pavlov : 2025-08-03",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "source_bytes": 2664245,
+  "source_md5": "967205af325fc85e5783b6847eaf8dba",
+  "comparison_note": "7-Zip sizes include the 7z container but exclude the native decoder executable. The project's scored size includes its .pyc decoder.",
+  "sevenzip_trials": [
+    {
+      "name": "LZMA2-normal",
+      "settings": [
+        "-mx=5",
+        "-m0=LZMA2"
+      ],
+      "methods": [
+        "Method = LZMA2:3m"
+      ],
+      "archive_bytes": 749766,
+      "encode": {
+        "wall_seconds": 1.187359496994759,
+        "user_seconds": 1.160938,
+        "system_seconds": 0.024236999999999998
+      },
+      "decode": {
+        "wall_seconds": 0.02909035299671814,
+        "user_seconds": 0.022110999999999992,
+        "system_seconds": 0.0043820000000000005
+      },
+      "round_trip": true,
+      "decoded_md5": "967205af325fc85e5783b6847eaf8dba"
+    },
+    {
+      "name": "LZMA2-ultra-64MiB",
+      "settings": [
+        "-mx=9",
+        "-m0=LZMA2",
+        "-md=64m"
+      ],
+      "methods": [
+        "Method = LZMA2:3m"
+      ],
+      "archive_bytes": 749817,
+      "encode": {
+        "wall_seconds": 1.30726581899944,
+        "user_seconds": 1.2860730000000002,
+        "system_seconds": 0.020135
+      },
+      "decode": {
+        "wall_seconds": 0.03163057199708419,
+        "user_seconds": 0.023797999999999764,
+        "system_seconds": 0.004733999999999995
+      },
+      "round_trip": true,
+      "decoded_md5": "967205af325fc85e5783b6847eaf8dba"
+    },
+    {
+      "name": "PPMd-order-4-64MiB",
+      "settings": [
+        "-mx=9",
+        "-m0=PPMd:mem=64m:o=4"
+      ],
+      "methods": [
+        "Method = PPMD",
+        "Method = PPMD:o4:mem26"
+      ],
+      "archive_bytes": 637484,
+      "encode": {
+        "wall_seconds": 0.09636907700041775,
+        "user_seconds": 0.09218600000000032,
+        "system_seconds": 0.003913
+      },
+      "decode": {
+        "wall_seconds": 0.10893300599855138,
+        "user_seconds": 0.09187900000000004,
+        "system_seconds": 0.015969000000000004
+      },
+      "round_trip": true,
+      "decoded_md5": "967205af325fc85e5783b6847eaf8dba"
+    },
+    {
+      "name": "PPMd-order-5-64MiB",
+      "settings": [
+        "-mx=9",
+        "-m0=PPMd:mem=64m:o=5"
+      ],
+      "methods": [
+        "Method = PPMD",
+        "Method = PPMD:o5:mem26"
+      ],
+      "archive_bytes": 603441,
+      "encode": {
+        "wall_seconds": 0.1250821249996079,
+        "user_seconds": 0.12081900000000001,
+        "system_seconds": 0.004070999999999991
+      },
+      "decode": {
+        "wall_seconds": 0.1746530399977928,
+        "user_seconds": 0.16448099999999988,
+        "system_seconds": 0.008792000000000008
+      },
+      "round_trip": true,
+      "decoded_md5": "967205af325fc85e5783b6847eaf8dba"
+    },
+    {
+      "name": "PPMd-order-6-64MiB",
+      "settings": [
+        "-mx=9",
+        "-m0=PPMd:mem=64m:o=6"
+      ],
+      "methods": [
+        "Method = PPMD",
+        "Method = PPMD:o6:mem26"
+      ],
+      "archive_bytes": 592956,
+      "encode": {
+        "wall_seconds": 0.19435306800005492,
+        "user_seconds": 0.185241,
+        "system_seconds": 0.008288000000000004
+      },
+      "decode": {
+        "wall_seconds": 0.35105153499898734,
+        "user_seconds": 0.32946600000000004,
+        "system_seconds": 0.020909999999999998
+      },
+      "round_trip": true,
+      "decoded_md5": "967205af325fc85e5783b6847eaf8dba"
+    },
+    {
+      "name": "PPMd-order-7-64MiB",
+      "settings": [
+        "-mx=9",
+        "-m0=PPMd:mem=64m:o=7"
+      ],
+      "methods": [
+        "Method = PPMD",
+        "Method = PPMD:o7:mem26"
+      ],
+      "archive_bytes": 590953,
+      "encode": {
+        "wall_seconds": 0.31617653400462586,
+        "user_seconds": 0.3074080000000001,
+        "system_seconds": 0.008346999999999993
+      },
+      "decode": {
+        "wall_seconds": 0.28766259999974864,
+        "user_seconds": 0.2670729999999999,
+        "system_seconds": 0.020176
+      },
+      "round_trip": true,
+      "decoded_md5": "967205af325fc85e5783b6847eaf8dba"
+    },
+    {
+      "name": "PPMd-order-8-64MiB",
+      "settings": [
+        "-mx=9",
+        "-m0=PPMd:mem=64m:o=8"
+      ],
+      "methods": [
+        "Method = PPMD",
+        "Method = PPMD:o8:mem26"
+      ],
+      "archive_bytes": 590996,
+      "encode": {
+        "wall_seconds": 0.3567594359992654,
+        "user_seconds": 0.35219500000000004,
+        "system_seconds": 0.004165000000000002
+      },
+      "decode": {
+        "wall_seconds": 0.38606060100573814,
+        "user_seconds": 0.35709699999999955,
+        "system_seconds": 0.028452000000000005
+      },
+      "round_trip": true,
+      "decoded_md5": "967205af325fc85e5783b6847eaf8dba"
+    },
+    {
+      "name": "PPMd-order-10-64MiB",
+      "settings": [
+        "-mx=9",
+        "-m0=PPMd:mem=64m:o=10"
+      ],
+      "methods": [
+        "Method = PPMD",
+        "Method = PPMD:o10:mem26"
+      ],
+      "archive_bytes": 592731,
+      "encode": {
+        "wall_seconds": 0.4542508189988439,
+        "user_seconds": 0.4460090000000001,
+        "system_seconds": 0.00775300000000001
+      },
+      "decode": {
+        "wall_seconds": 0.4968784279990359,
+        "user_seconds": 0.4846559999999993,
+        "system_seconds": 0.011804999999999982
+      },
+      "round_trip": true,
+      "decoded_md5": "967205af325fc85e5783b6847eaf8dba"
+    },
+    {
+      "name": "PPMd-order-12-64MiB",
+      "settings": [
+        "-mx=9",
+        "-m0=PPMd:mem=64m:o=12"
+      ],
+      "methods": [
+        "Method = PPMD",
+        "Method = PPMD:o12:mem26"
+      ],
+      "archive_bytes": 593873,
+      "encode": {
+        "wall_seconds": 0.49406128199916566,
+        "user_seconds": 0.46916899999999995,
+        "system_seconds": 0.024312
+      },
+      "decode": {
+        "wall_seconds": 0.5221677099980297,
+        "user_seconds": 0.49718600000000013,
+        "system_seconds": 0.02437000000000003
+      },
+      "round_trip": true,
+      "decoded_md5": "967205af325fc85e5783b6847eaf8dba"
+    }
+  ],
+  "project": {
+    "data_bytes": 615385,
+    "decoder_pyc_bytes": 7402,
+    "scored_bytes": 622787,
+    "encode": {
+      "wall_seconds": 11.06599455000105,
+      "user_seconds": 11.013818,
+      "system_seconds": 0.047563999999999995
+    },
+    "decode": {
+      "wall_seconds": 11.536972121997678,
+      "user_seconds": 11.475954,
+      "system_seconds": 0.051817
+    },
+    "round_trip": true,
+    "decoded_md5": "967205af325fc85e5783b6847eaf8dba"
+  }
+}
